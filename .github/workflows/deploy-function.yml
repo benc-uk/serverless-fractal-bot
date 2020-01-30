@@ -3,14 +3,16 @@ on:
     branches:
       - master
 
+name: 'Build & Deploy'
+
 env:
   AZURE_WEBAPP_NAME: fractals    
   AZURE_WEBAPP_PACKAGE_PATH: 'functions'
   NODE_VERSION: '12.x'
 
 jobs:
-  build-and-deploy:
-    name: 'Build & Deploy'
+  buildDeployJob:
+    name: 'Build & Deploy Job'
     runs-on: windows-latest
     
     steps:
@@ -23,6 +25,7 @@ jobs:
     
     - name: 'Run npm install'
       run: npm install
+      working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
     
     - name: 'Deploy to Azure Function App'
       uses: azure/webapps-deploy@v1
