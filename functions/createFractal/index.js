@@ -8,7 +8,10 @@ var panx = -100;
 var pany = 0;
 var zoom = 200;
 var maxiters = 150;
-var palette;
+
+const escape = 256.0
+const escape2 = escape * escape
+const log2 = Math.log(2.0)
 
 module.exports = async function (context, req) {
   var createCanvas;
@@ -25,7 +28,8 @@ module.exports = async function (context, req) {
   maxiters = req.query.iters || 150.0  
   zoom = req.query.zoom || 200
   panx = parseFloat(req.query.panx || "-100")
-  pany = parseFloat(req.query.pany || "0")
+  pany = parseFloat(req.query.pany || "0") 
+  let hue = req.query.hue || 130
 
   const canvas = createCanvas(WIDTH, HEIGHT)
   const ctx = canvas.getContext('2d')
@@ -38,8 +42,8 @@ module.exports = async function (context, req) {
       if (iterations == maxiters) {
         ctx.fillStyle = `rgb(0, 0, 0)`;
       } else {
-        let r = Math.floor((iterations / (maxiters-1)) * 100)
-        ctx.fillStyle = `hsl(${req.query.hue || 30}, 100%, ${r}%)`;
+        let l = (iterations / (maxiters-1)) * 140.0
+        ctx.fillStyle = `hsl(${hue}, 100%, ${l}%)`;
       }  
 
       ctx.fillRect(x, y, 1, 1);
@@ -68,14 +72,25 @@ function iterate(x, y) {
 
   // Iterate
   var iterations = 0;
-  while (iterations < maxiters && (rx * rx + ry * ry <= 4)) {
-      rx = a * a - b * b + x0;
-      ry = 2 * a * b + y0;
+  let mag = rx * rx + ry * ry;
+  while (iterations < maxiters) {
+    rx = a * a - b * b + x0;
+    ry = 2 * a * b + y0;
+    mag = rx * rx + ry * ry
+		if (mag > escape2) {
+			break
+		}
 
-      // Next iteration
-      a = rx;
-      b = ry;
-      iterations++;
+    // Next iteration
+    a = rx;
+    b = ry;
+    iterations++;
   }
-  return iterations
+
+  if (iterations >= maxiters) {
+		return maxiters
+	}
+
+  let smoothIter = iterations + 2.0 - Math.log(Math.log(mag/Math.log(escape)))/log2
+	return smoothIter
 }
