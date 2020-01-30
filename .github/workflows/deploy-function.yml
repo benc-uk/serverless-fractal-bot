@@ -6,9 +6,9 @@ on:
 name: 'Build & Deploy'
 
 env:
-  AZURE_WEBAPP_NAME: fractals    
-  AZURE_WEBAPP_PACKAGE_PATH: 'functions'
-  NODE_VERSION: '12.x'
+  AZURE_WEBAPP_NAME:         'fractals'   
+  AZURE_WEBAPP_PACKAGE_PATH: './functions'
+  NODE_VERSION:              '12.x'
 
 jobs:
   buildDeployJob:

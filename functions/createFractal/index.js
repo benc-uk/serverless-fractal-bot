@@ -39,8 +39,7 @@ module.exports = async function (context, req) {
         ctx.fillStyle = `rgb(0, 0, 0)`;
       } else {
         let r = Math.floor((iterations / (maxiters-1)) * 100)
-        ctx.fillStyle = `hsl(${req.query.hue || 70}, 100%, ${r}%)`;
-        //ctx.fillStyle = `rgb(${r}, ${g}, 0)`;
+        ctx.fillStyle = `hsl(${req.query.hue || 30}, 100%, ${r}%)`;
       }  
 
       ctx.fillRect(x, y, 1, 1);
