@@ -1,14 +1,3 @@
-
-
-// Fractal parameters
-var width     // output image width
-var height    // output image height
-var panx
-var pany
-var zoom
-var maxiters
-var hue
-
 const escape = 256.0
 const escape2 = escape * escape
 const log2 = Math.log(2.0)
@@ -21,17 +10,19 @@ module.exports = async function (context, req) {
     context.res = {
       status: 500,
       body: err.toString()
-    };
+    };       
     return
   }
 
-  maxiters = req.query.iters || 150.0  
-  zoom = parseFloat(req.query.zoom || 2)
-  panx = parseFloat(req.query.panx || -0.3)
-  pany = parseFloat(req.query.pany || 0) 
-  width = parseInt(req.query.width || 300)
-  height = parseInt(req.query.height || 200)
-  hue = parseInt(req.query.hue || 130)
+  // Parse parameters
+  let maxiters = req.query.iters || 350.0  
+  let zoom = parseFloat(req.query.zoom || 2)
+  let panx = parseFloat(req.query.panx || -0.3)
+  let pany = parseFloat(req.query.pany || 0) 
+  let width = parseInt(req.query.width || 600)
+  let height = parseInt(req.query.height || 400)
+  let hue = parseInt(req.query.hue || 120)
+  let brightness = parseInt(req.query.brightness || 700)
   const ratio = width / height
   
   const canvas = createCanvas(width, height)
@@ -45,14 +36,14 @@ module.exports = async function (context, req) {
       i = pany + ((y - height/2) / height) * zoom
 
       // Actual work here
-      let iterations = iterateFractal(r, i);
+      let iterations = iterateFractal(r, i, maxiters);
 
       // Choose colour of pixel
       if (iterations == maxiters) {
         ctx.fillStyle = `rgb(0, 0, 0)`;
       } else {
         // Outside the set, colour based on number of iterations
-        let l = (iterations / (maxiters-1)) * 150.0
+        let l = (iterations / (maxiters-1)) * brightness
         ctx.fillStyle = `hsl(${hue}, 100%, ${l}%)`;
       }  
 
@@ -71,7 +62,7 @@ module.exports = async function (context, req) {
 //
 // Get number of interations for a point in the fractal
 //
-function iterateFractal(r, i) {
+function iterateFractal(r, i, maxiters) {
   // Iteration variables
   var a = 0;
   var b = 0;
