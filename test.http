@@ -1,4 +1,1 @@
-
-
-
-GET http://localhost:7071/api/createFractal?hue=10
+GET http://127.0.0.1:7071/api/createFractal
