@@ -1,13 +1,13 @@
-const WIDTH = 800
-const HEIGHT = 600
 
-// Pan and zoom parameters
-var offsetx = -WIDTH / 2;
-var offsety = -HEIGHT / 2;
-var panx = -100;
-var pany = 0;
-var zoom = 200;
-var maxiters = 150;
+
+// Fractal parameters
+var width     // output image width
+var height    // output image height
+var panx
+var pany
+var zoom
+var maxiters
+var hue
 
 const escape = 256.0
 const escape2 = escape * escape
@@ -26,23 +26,33 @@ module.exports = async function (context, req) {
   }
 
   maxiters = req.query.iters || 150.0  
-  zoom = req.query.zoom || 200
-  panx = parseFloat(req.query.panx || "-100")
-  pany = parseFloat(req.query.pany || "0") 
-  let hue = req.query.hue || 130
-
-  const canvas = createCanvas(WIDTH, HEIGHT)
+  zoom = parseFloat(req.query.zoom || 2)
+  panx = parseFloat(req.query.panx || -0.3)
+  pany = parseFloat(req.query.pany || 0) 
+  width = parseInt(req.query.width || 300)
+  height = parseInt(req.query.height || 200)
+  hue = parseInt(req.query.hue || 130)
+  const ratio = width / height
+  
+  const canvas = createCanvas(width, height)
   const ctx = canvas.getContext('2d')
+  let r, i;
   
   // Generate image
   for (var x = 0; x < canvas.width; x++) {
     for (var y = 0; y < canvas.height; y++) {
-      let iterations = iterate(x, y);
+      r = panx + ((x - width/2) / width) * zoom * ratio
+      i = pany + ((y - height/2) / height) * zoom
 
+      // Actual work here
+      let iterations = iterateFractal(r, i);
+
+      // Choose colour of pixel
       if (iterations == maxiters) {
         ctx.fillStyle = `rgb(0, 0, 0)`;
       } else {
-        let l = (iterations / (maxiters-1)) * 140.0
+        // Outside the set, colour based on number of iterations
+        let l = (iterations / (maxiters-1)) * 150.0
         ctx.fillStyle = `hsl(${hue}, 100%, ${l}%)`;
       }  
 
@@ -58,12 +68,10 @@ module.exports = async function (context, req) {
 };
 
 
-// Calculate the color of a specific pixel
-function iterate(x, y) {
-  // Convert the screen coordinate to a fractal coordinate
-  var x0 = (x + offsetx + panx) / zoom;
-  var y0 = (y + offsety + pany) / zoom;
-
+//
+// Get number of interations for a point in the fractal
+//
+function iterateFractal(r, i) {
   // Iteration variables
   var a = 0;
   var b = 0;
@@ -74,8 +82,8 @@ function iterate(x, y) {
   var iterations = 0;
   let mag = rx * rx + ry * ry;
   while (iterations < maxiters) {
-    rx = a * a - b * b + x0;
-    ry = 2 * a * b + y0;
+    rx = a * a - b * b + r;
+    ry = 2 * a * b + i;
     mag = rx * rx + ry * ry
 		if (mag > escape2) {
 			break
@@ -91,6 +99,7 @@ function iterate(x, y) {
 		return maxiters
 	}
 
+  // I don't understand this, but it smooths the output
   let smoothIter = iterations + 2.0 - Math.log(Math.log(mag/Math.log(escape)))/log2
 	return smoothIter
 }
