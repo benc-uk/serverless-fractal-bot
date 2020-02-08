@@ -54,8 +54,12 @@ module.exports = async function (context, req) {
         ctx.fillStyle = `rgb(0, 0, 0)`
       } else {
         // Outside the set, colour based on number of iterations
-        let l = (iterations / (maxiters-1)) * brightness
-        ctx.fillStyle = `hsl(${hue}, ${sat}%, ${l}%)`
+        let nIter = iterations / (maxiters - 1)
+        let lumVal = nIter * brightness
+        let hueLoops = (zoom * zoom) / 15
+        let hueVal = Math.cos(nIter * hueLoops) * hue
+
+        ctx.fillStyle = `hsl(${hueVal}, ${sat}%, ${lumVal}%)`
       }  
 
       // Draw the pixel

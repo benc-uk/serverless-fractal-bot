@@ -9,8 +9,8 @@ module.exports = async function (context, req) {
     let createFractal = require('../createFractal');
     let request = {
       query: {
-        w: 1200,
-        h: 800,
+        w: parseInt(req.query.w || 400),
+        h: parseInt(req.query.h || 300),
         zoom: 3 + Math.random() * 40,
         bright: 120,
         hue: Math.random() * 255,
