@@ -10,6 +10,13 @@
       ]
     },
     {
+      "type": "blob",
+      "name": "imageOut",
+      "path": "fractals/{rand-guid}.png",
+      "connection": "AzureWebJobsStorage",
+      "direction": "out"
+    },
+    {
       "type": "http",
       "direction": "out",
       "name": "res"

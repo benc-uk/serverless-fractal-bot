@@ -1,5 +1,6 @@
 ### Default mandlebrot
-GET http://127.0.0.1:7071/api/createFractal?zoom=4&r=-1.5
+GET http://127.0.0.1:7071/api/createFractal?zoom=7&r=-1.5&loops=4
+
 ### Default Julia
 GET http://127.0.0.1:7071/api/createFractal?type=julia
 
@@ -15,7 +16,7 @@ http://127.0.0.1:7071/api/createFractal?i=0.32840108139174217&r=0.45402881168942
 ###########################################################
 
 ### Make a random fractal
-GET http://127.0.0.1:7071/api/randomFractal
+GET http://127.0.0.1:7071/api/randomFractal?w=1200&h=800
 
 ###########################################################
 
