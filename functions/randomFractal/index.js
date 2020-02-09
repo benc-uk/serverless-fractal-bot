@@ -1,7 +1,7 @@
 const fs = require('fs')
 const Twitter = require('twitter')
 
-const FUNCTION_APP_NAME = process.env.FUNCTION_APP_NAME || "fractals"
+const FUNCTION_APP_NAME = process.env.APPSETTING_WEBSITE_SITE_NAME || "fractals"
 const TWITTER_API_KEY = process.env.TWITTER_API_KEY || ""
 const TWITTER_API_SECRET = process.env.TWITTER_API_SECRET || ""
 const TWITTER_ACCESS_TOKEN = process.env.TWITTER_ACCESS_TOKEN || ""
