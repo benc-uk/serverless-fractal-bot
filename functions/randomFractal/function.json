@@ -1,20 +1,10 @@
 {
   "bindings": [
     {
-      "authLevel": "anonymous",
-      "type": "httpTrigger",
+      "name": "fractalTimer",
+      "type": "timerTrigger",
       "direction": "in",
-      "name": "req",
-      "methods": [
-        "get"
-      ]
-    },
-    {
-      "type": "blob",
-      "name": "imageOut",
-      "path": "fractals/{rand-guid}.png",
-      "connection": "AzureWebJobsStorage",
-      "direction": "out"
+      "schedule": "0 39 */1 * * *"
     },
     {
       "type": "http",

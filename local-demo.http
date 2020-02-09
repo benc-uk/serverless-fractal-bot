@@ -1,5 +1,5 @@
 ### Default mandlebrot
-GET http://127.0.0.1:7071/api/createFractal?zoom=7&r=-1.5&loops=4
+GET http://127.0.0.1:7071/api/createFractal
 
 ### Default Julia
 GET http://127.0.0.1:7071/api/createFractal?type=julia
@@ -11,7 +11,7 @@ GET http://127.0.0.1:7071/api/createFractal?r=-0.1599&i=-1.0185&zoom=388&bright=
 GET http://127.0.0.1:7071/api/createFractal?zoom=10&i=-1&r=-0.131&hue=220
 
 ### Frosty!
-http://127.0.0.1:7071/api/createFractal?i=0.32840108139174217&r=0.4540288116894214&zoom=190&hue=190&bright=120
+http://127.0.0.1:7071/api/createFractal?i=0.32840108139174217&r=0.4540288116894214&zoom=190&hue=190&bright=120&w=2000&h=1000
 
 ###########################################################
 
@@ -21,4 +21,4 @@ GET http://127.0.0.1:7071/api/randomFractal?w=1200&h=800
 ###########################################################
 
 ### Generate points data
-GET http://127.0.0.1:7071/api/createPoints?iters=60&w=400&h=300
+GET http://127.0.0.1:7071/api/createPoints?iters=60&w=800&h=600

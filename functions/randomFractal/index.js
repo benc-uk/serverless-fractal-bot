@@ -1,28 +1,32 @@
 const fs = require('fs')
-//const request = require('request-promise-native')
-const { BlobServiceClient, StorageSharedKeyCredential } = require("@azure/storage-blob");
+const Twitter = require('twitter')
 
-const account = process.env.AzureWebJobsStorage.split(';')[1].replace('AccountName=', '');
-const accountKey = process.env.AzureWebJobsStorage.split(';')[2].replace('AccountKey=', '')
-const container = "fractals"
+const FUNCTION_APP_NAME = process.env.FUNCTION_APP_NAME || "fractals"
+const TWITTER_API_KEY = process.env.TWITTER_API_KEY || ""
+const TWITTER_API_SECRET = process.env.TWITTER_API_SECRET || ""
+const TWITTER_ACCESS_TOKEN = process.env.TWITTER_ACCESS_TOKEN || ""
+const TWITTER_TOKEN_SECRET = process.env.TWITTER_TOKEN_SECRET || ""
+const DEFAULT_WIDTH = 1280
+const DEFAULT_HEIGHT = 768
 
-module.exports = async function (context, req) {
+module.exports = async function (context, fractalTimer) {
   // Load points file and pick a random one
   points = JSON.parse( fs.readFileSync('points.json') )
   let point = points[Math.floor(Math.random() * points.length)]
 
   try {
-    let createFractal = require('../createFractal');
+    const createFractal = require('../createFractal')
 
+    // Randomly pick deep or shallow zoom
     zoomDepth =  Math.random() > 0.5 ? 20 : 500
     
     // Create a fake request object with query params
     let fractalRequest = {
       query: {
-        w: parseInt(req.query.w || 400),
-        h: parseInt(req.query.h || 300),
-        zoom: parseInt(req.query.zoom || (3 + Math.random() * zoomDepth)),
-        bright: 80 + Math.random() * 40,
+        w: DEFAULT_WIDTH, //parseInt(req.query.w || DEFAULT_WIDTH),
+        h: DEFAULT_HEIGHT, //parseInt(req.query.h || DEFAULT_HEIGHT),
+        zoom: 3 + Math.random() * zoomDepth,
+        bright: 70 + Math.random() * 40,
         hue: Math.random() * 255,
         iter: 50 + Math.random() * 100,
         r: point.r,
@@ -32,37 +36,33 @@ module.exports = async function (context, req) {
       }
     }
 
-    // Fake empty context
+    // Call createFractal with our request & empty context
     let fractalCtx = {}
-    // Call createFractal with our request, results will be put into ctx
     await createFractal(fractalCtx, fractalRequest)
     
+    var queryString = Object.keys(fractalRequest.query).map(key => key + '=' + fractalRequest.query[key]).join('&');
+    var fractalUrl = `https://${FUNCTION_APP_NAME}.azurewebsites.net/api/createFractal?${queryString}`
+    context.log(`### fractalUrl: ${fractalUrl}`);
+    
+    const client = new Twitter({
+      consumer_key: TWITTER_API_KEY,
+      consumer_secret: TWITTER_API_SECRET,
+      access_token_key: TWITTER_ACCESS_TOKEN,
+      access_token_secret: TWITTER_TOKEN_SECRET
+    });
 
-    const sharedKeyCredential = new StorageSharedKeyCredential(account, accountKey);
-    const blobServiceClient = new BlobServiceClient(
-      `https://${account}.blob.core.windows.net`,
-      sharedKeyCredential
-    );
-
-    const containerClient = blobServiceClient.getContainerClient(container);
-    const content = fractalCtx.res.body;
-    const blobName = new Date().getTime() + ".png";
-    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    opt = {
-      blobHTTPHeaders: {
-        blobContentType: 'image/png'
-      }
-    }
-    await blockBlobClient.upload(content, content.length, opt);
-  
-    context.res = {
-      body: {
-        imageUrl: `https://${account}.blob.core.windows.net/${container}/${blobName}`,
-        fractal: fractalRequest.query
-      }
+    if(TWITTER_API_KEY) {
+      let mediaResp = await client.post('media/upload', { media: fractalCtx.res.body })
+      let twitterResp = await client.post('statuses/update', {
+        status: `Mandelbrot(r=${fractalRequest.query.r.toFixed(4)}, i=${fractalRequest.query.i.toFixed(4)}, zoom=${fractalRequest.query.zoom.toFixed(4)})\n${fractalUrl}`, 
+        media_ids: mediaResp.media_id_string
+      })
+      context.log(`### Tweet sent: ${twitterResp.id}\n${twitterResp.text}`);
     }
 
+    context.done() //res = fractalCtx.res
   } catch(err) {
-    console.log(`### ERR ### ${err}`); 
+    context.log(`### ERROR: ${err} ${JSON.stringify(err)}`)
+    return
   }
 };

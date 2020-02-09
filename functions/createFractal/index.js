@@ -19,13 +19,13 @@ module.exports = async function (context, req) {
   let width =      parseInt(req.query.w || 600)
   let height =     parseInt(req.query.h || 400)
   let hue =        parseInt(req.query.hue || 120)
-  let hueLoops =   parseFloat(req.query.hueLoops || 4)  
+  let hueLoops =   parseFloat(req.query.hueLoops || 1)  
   let sat =        parseInt(req.query.sat || 100)
   let brightness = parseInt(req.query.bright|| 150)
   let seedR =      parseFloat(req.query.juliar || 0.362)
   let seedI =      parseFloat(req.query.juliai || 0.370)
   let innerBright = parseFloat(req.query.innerBright || 0)
-
+  
   const ratio = width / height
   
   const canvas = createCanvas(width, height)
