@@ -1,4 +1,35 @@
+const fs = require('fs')
 
+module.exports.randomFractalRequest = function(width, height) {
+  // Load points file and pick a random one
+  points = JSON.parse( fs.readFileSync('points.json') )
+  let point = points[Math.floor(Math.random() * points.length)]
+
+  // Randomly pick deep or shallow zoom
+  zoomDepth = Math.random() > 0.5 ? 20 : 500
+  type = Math.random() >= 0.5 ? 'mandelbrot' : 'julia'
+  type = 'julia'
+  // Create a fake request object with query params
+  let fractalRequest = {
+    query: {
+      juliai: -0.77,
+      juliar: -0.12,
+      type: type,
+      w: width,
+      h: height,
+      zoom: 20,//3 + Math.random() * zoomDepth,
+      bright: 70 + Math.random() * 40,
+      hue: Math.random() * 255,
+      iter: 50 + Math.random() * 100,
+      r: 0.2,//point.r,
+      i: 0,//point.i,
+      hueLoops: Math.random() * 4,
+      innerBright: Math.random() * 50
+    }
+  }
+
+  return fractalRequest
+}
 
 //
 // Get number of interations for a point in the fractal

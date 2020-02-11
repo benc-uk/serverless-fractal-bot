@@ -1,10 +1,17 @@
 {
-  "name": "functions",
+  "name": "fractal-functions",
+  "author": {
+    "name": "Ben Coleman",
+    "email": "ben.coleman@microsoft.com"
+  },
   "version": "1.0.0",
-  "description": "",
+  "description": "Serverless fractal image generation",
+  "repository": {
+    "url": "https://github.com/benc-uk/serverless-fractal-bot"
+  },
+  "license": "MIT",
   "scripts": {
-    "start": "func start",
-    "test": "echo \"No tests yet...\""
+    "start": "func start"
   },
   "dependencies": {
     "canvas": "^2.6.1",

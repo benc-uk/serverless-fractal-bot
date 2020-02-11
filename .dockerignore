@@ -1,0 +1,3 @@
+local.settings.json
+**/node_modules/
+points.json

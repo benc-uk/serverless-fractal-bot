@@ -1,0 +1,17 @@
+{
+  "disabled": true,
+  "bindings": [
+    {
+      "name": "fractalTimer",
+      "type": "timerTrigger",
+      "direction": "in",
+      "schedule": "0 39 */2 * * *",
+      "runOnStartup": false
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    }
+  ]
+}
