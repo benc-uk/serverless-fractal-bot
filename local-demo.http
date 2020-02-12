@@ -5,7 +5,7 @@ GET http://127.0.0.1:7071/api/createFractal
 GET http://127.0.0.1:7071/api/createFractal?type=julia
 
 ### Testing Julia
-GET http://127.0.0.1:7071/api/createFractal?type=julia&w=3400&h=1440&i=0.0&r=0.0&juliar=-0.79&juliai=0.15&zoom=0.7&iters=120&hue=255&bright=110&hueLoops=2
+GET http://127.0.0.1:7071/api/createFractal?type=julia&w=300&h=300&i=0.0&r=-0.5&juliar=-0.75&juliai=0.15&zoom=3&iters=620&hue=255&bright=110&hueLoops=2&r=-0.2
 
 ### Lightning looking 
 GET http://127.0.0.1:7071/api/createFractal?r=-0.1599&i=-1.0185&zoom=388&bright=290&hue=200&w=400&h=300
@@ -19,7 +19,7 @@ http://127.0.0.1:7071/api/createFractal?i=0.32840108139174217&r=0.45402881168942
 ###########################################################
 
 ### Make a random fractal
-GET http://127.0.0.1:7071/api/randomFractal?w=1200&h=800
+GET http://127.0.0.1:7071/api/randomFractal
 
 ###########################################################
 

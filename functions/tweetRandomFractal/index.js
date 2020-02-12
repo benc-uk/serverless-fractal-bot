@@ -7,8 +7,9 @@ const TWITTER_API_KEY = process.env.TWITTER_API_KEY || null
 const TWITTER_API_SECRET = process.env.TWITTER_API_SECRET || null
 const TWITTER_ACCESS_TOKEN = process.env.TWITTER_ACCESS_TOKEN || null
 const TWITTER_TOKEN_SECRET = process.env.TWITTER_TOKEN_SECRET || null
-const DEFAULT_WIDTH = 1280
-const DEFAULT_HEIGHT = 768
+
+const FRACTAL_WIDTH = 1280
+const FRACTAL_HEIGHT = 768
 
 module.exports = async function (context, fractalTimer) {
   try {
@@ -18,16 +19,16 @@ module.exports = async function (context, fractalTimer) {
       return
     }
 
-    // Get random fractal parameters
-    let randomReq = await randomFractalRequest(DEFAULT_WIDTH, DEFAULT_HEIGHT)
+    // Get randomized fractal parameters
+    let fractalRequest = await randomFractalRequest(FRACTAL_WIDTH, FRACTAL_HEIGHT)
 
     // Call createFractal with our request & empty context
     // !Note! This is calling another top level Function, we cheat and pretend we're a HTTP trigger request
     let fractalCtx = {}
-    await createFractal(fractalCtx, randomReq)
+    await createFractal(fractalCtx, fractalRequest)
     
     // Form fractal URL, just for putting into the tweet text
-    var queryString = Object.keys(randomReq.query).map(key => key + '=' + randomReq.query[key]).join('&')
+    var queryString = Object.keys(fractalRequest.query).map(key => key + '=' + fractalRequest.query[key]).join('&')
     var fractalUrl = `https://${FUNCTION_APP_NAME}.azurewebsites.net/api/createFractal?${queryString}`
     context.log(`### fractalUrl: ${fractalUrl}`)
     
@@ -41,9 +42,18 @@ module.exports = async function (context, fractalTimer) {
 
     // Upload the image using the body of the context from createFractal, note this is a binary Buffer
     let mediaResp = await client.post('media/upload', { media: fractalCtx.res.body })
+
+    let status
+    if(fractalRequest.query.type === 'mandelbrot') {
+      status = `mandelbrot(r=${fractalRequest.query.r.toFixed(4)}, i=${fractalRequest.query.i.toFixed(4)}, zoom=${fractalRequest.query.zoom.toFixed(4)})`
+    } else {
+      status = `julia(seedR=${fractalRequest.query.r.toFixed(4)}, seedR=${fractalRequest.query.i.toFixed(4)}, zoom=${fractalRequest.query.zoom.toFixed(4)})`
+    }
+    status += `\n${fractalUrl}`
+
     // Now send the tweet, attaching the media_id from the image upload
     let twitterResp = await client.post('statuses/update', {
-      status: `Mandelbrot(r=${fractalRequest.query.r.toFixed(4)}, i=${fractalRequest.query.i.toFixed(4)}, zoom=${fractalRequest.query.zoom.toFixed(4)})\n${fractalUrl}`, 
+      status: status,
       media_ids: mediaResp.media_id_string
     })
 

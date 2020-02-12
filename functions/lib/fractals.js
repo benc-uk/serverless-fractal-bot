@@ -1,30 +1,77 @@
 const fs = require('fs')
 
 module.exports.randomFractalRequest = function(width, height) {
-  // Load points file and pick a random one
-  points = JSON.parse( fs.readFileSync('points.json') )
-  let point = points[Math.floor(Math.random() * points.length)]
-
-  // Randomly pick deep or shallow zoom
-  zoomDepth = Math.random() > 0.5 ? 20 : 500
+  let fractalRequest = {}
   type = Math.random() >= 0.5 ? 'mandelbrot' : 'julia'
   type = 'julia'
-  // Create a fake request object with query params
-  let fractalRequest = {
-    query: {
-      juliai: -0.77,
-      juliar: -0.12,
-      type: type,
-      w: width,
-      h: height,
-      zoom: 20,//3 + Math.random() * zoomDepth,
-      bright: 70 + Math.random() * 40,
-      hue: Math.random() * 255,
-      iter: 50 + Math.random() * 100,
-      r: 0.2,//point.r,
-      i: 0,//point.i,
-      hueLoops: Math.random() * 4,
-      innerBright: Math.random() * 50
+
+  if(type === 'julia') {
+    // Julia set 'interesting' points
+    let seeds = [
+      { r: +0.000, i: +0.800 },
+      { r: +0.370, i: +0.100 },
+      { r: +0.335, i: +0.335 },
+      { r: -0.540, i: +0.540 },
+      { r: -0.400, i: -0.590 },
+      { r: +0.340, i: -0.050 },
+      { r: -0.790, i: +0.150 },
+      { r: -0.162, i: +1.040 },
+      { r: +0.300, i: -0.010 }, 
+      { r: +0.280, i: +0.008 },
+      { r: -0.120, i: -0.770 }, 
+      { r: -1.476, i: +0.000 }, 
+      { r: 0.355534, i: -0.337292 }
+    ]
+    let seed = seeds[Math.floor(Math.random() * seeds.length)]
+
+    seed.r += Math.random() * 0.01 - 0.005
+    seed.i += Math.random() * 0.01 - 0.005
+
+    // Wiggle about center [-0.5 ~ +0.5]
+    let r = Math.random() - 0.5
+    let i = Math.random() - 0.5
+
+    fractalRequest = {
+      query: {
+        type: 'julia',
+        juliar: seed.r,
+        juliai: seed.i,
+        w: width,
+        h: height,
+        zoom: Math.random() * 5,
+        bright: 70 + Math.random() * 60,
+        hue: Math.random() * 255,
+        iter: 100 + Math.random() * 300,
+        r: r,
+        i: i,
+        hueLoops: Math.random() * 4,
+        innerBright: Math.random() * 50
+      }
+    }
+
+  } else {
+    // Load points file and pick a random one
+    let points = JSON.parse( fs.readFileSync('points.json') )
+    let point = points[Math.floor(Math.random() * points.length)]
+
+    // Randomly pick deep or shallow zoom
+    zoomDepth = Math.random() > 0.5 ? 20 : 500
+
+    // Create a fake request object with query params
+    fractalRequest = {
+      query: {
+        type: 'mandelbrot',
+        w: width,
+        h: height,
+        zoom: 3 + Math.random() * zoomDepth,
+        bright: 70 + Math.random() * 40,
+        hue: Math.random() * 255,
+        iter: 50 + Math.random() * 100,
+        r: point.r,
+        i: point.i,
+        hueLoops: Math.random() * 4,
+        innerBright: Math.random() * 50
+      }
     }
   }
 
