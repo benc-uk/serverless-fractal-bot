@@ -1,12 +1,15 @@
 const fs = require('fs')
 
+//
+// Generate parameters for a random but (hopefully) good looking fractal
+//
 module.exports.randomFractalRequest = function(width, height) {
+  // 50/50 chance of mandelbrot or julia fractal
   let fractalRequest = {}
   type = Math.random() >= 0.5 ? 'mandelbrot' : 'julia'
-  type = 'julia'
 
   if(type === 'julia') {
-    // Julia set 'interesting' points
+    // 'interesting' seeds for a Julia set, gathered from the web
     let seeds = [
       { r: +0.000, i: +0.800 },
       { r: +0.370, i: +0.100 },
@@ -22,12 +25,14 @@ module.exports.randomFractalRequest = function(width, height) {
       { r: -1.476, i: +0.000 }, 
       { r: 0.355534, i: -0.337292 }
     ]
+    // Pick a random seed from the list
     let seed = seeds[Math.floor(Math.random() * seeds.length)]
 
+    // Wiggle the seed very slightly
     seed.r += Math.random() * 0.01 - 0.005
     seed.i += Math.random() * 0.01 - 0.005
 
-    // Wiggle about center [-0.5 ~ +0.5]
+    // Wiggle about center [-0.5 ~ +0.5] slightly
     let r = Math.random() - 0.5
     let i = Math.random() - 0.5
 

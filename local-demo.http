@@ -1,27 +1,27 @@
 ### Default mandlebrot
-GET http://127.0.0.1:7071/api/createFractal
+GET http://localhost:7071/api/createFractal
 
 ### Default Julia
-GET http://127.0.0.1:7071/api/createFractal?type=julia
+GET http://localhost:7071/api/createFractal?type=julia
 
 ### Testing Julia
-GET http://127.0.0.1:7071/api/createFractal?type=julia&w=300&h=300&i=0.0&r=-0.5&juliar=-0.75&juliai=0.15&zoom=3&iters=620&hue=255&bright=110&hueLoops=2&r=-0.2
+GET http://localhost:7071/api/createFractal?type=julia&w=300&h=300&i=0.0&r=-0.5&juliar=-0.75&juliai=0.15&zoom=3&iters=620&hue=255&bright=110&hueLoops=2&r=-0.2
 
 ### Lightning looking 
-GET http://127.0.0.1:7071/api/createFractal?r=-0.1599&i=-1.0185&zoom=388&bright=290&hue=200&w=400&h=300
+GET http://localhost:7071/api/createFractal?r=-0.1599&i=-1.0185&zoom=388&bright=290&hue=200&w=400&h=300
 
 ### Test mandlebrot
-GET http://127.0.0.1:7071/api/createFractal?zoom=10&i=-1&r=-0.131&hue=220
+GET http://localhost:7071/api/createFractal?zoom=10&i=-1&r=-0.131&hue=220
 
 ### Frosty!
-http://127.0.0.1:7071/api/createFractal?i=0.32840108139174217&r=0.4540288116894214&zoom=190&hue=190&bright=120&w=2000&h=1000
+http://localhost:7071/api/createFractal?i=0.32840108139174217&r=0.4540288116894214&zoom=190&hue=190&bright=120&w=2000&h=1000
 
 ###########################################################
 
 ### Make a random fractal
-GET http://127.0.0.1:7071/api/randomFractal
+GET http://localhost:7071/api/randomFractal
 
 ###########################################################
 
 ### Generate points data
-GET http://127.0.0.1:7071/api/createPoints?iters=200&w=800&h=600&threshold=85
+GET http://localhost:7071/api/createPoints?iters=200&w=800&h=600&threshold=85

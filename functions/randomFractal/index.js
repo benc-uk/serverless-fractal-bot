@@ -1,6 +1,9 @@
 const randomFractalRequest = require('../lib/fractals').randomFractalRequest
 const createFractal = require('../createFractal')
 
+//
+// Render a randomly generated fractal and return it as a PNG
+//
 module.exports = async function (context, req) {
   context.log('JavaScript HTTP trigger function processed a request.');
 
@@ -11,5 +14,7 @@ module.exports = async function (context, req) {
   let fractalCtx = {}
   await createFractal(fractalCtx, request)
 
+  // We're a passthrough and return the context which has the PNG body etc
+  // see createFractal for details :)
   context.res = fractalCtx.res
 };

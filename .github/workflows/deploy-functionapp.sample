@@ -1,0 +1,39 @@
+on:
+  push:
+    branches:
+      - master
+
+name: 'Build & Deploy'
+
+# !! IMPORTANT !!
+# Create secret it GitHub called: AZURE_WEBAPP_PUBLISH_PROFILE
+# Get the value for this, from your Azure Function app via the portal 
+
+env:
+  AZURE_WEBAPP_NAME:         '{CHANGE_ME}'   
+  AZURE_WEBAPP_PACKAGE_PATH: './functions'
+  NODE_VERSION:              '12.x'
+
+jobs:
+  buildDeployJob:
+    name: 'Build & Deploy Job'
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+      
+    - name: 'Use Node.js ${{ env.NODE_VERSION }}'
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    
+    - name: 'Run npm install'
+      run: npm install
+      working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+    
+    - name: 'Deploy to Azure Function App'
+      uses: azure/webapps-deploy@v1
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
