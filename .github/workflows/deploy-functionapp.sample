@@ -1,3 +1,7 @@
+# !! IMPORTANT !!
+# Create secret it GitHub called: AZURE_FUNCTIONAPP_PUBPROFILE
+# Get the value for this, from your Azure Function app via the portal 
+
 on:
   push:
     branches:
@@ -5,14 +9,10 @@ on:
 
 name: 'Build & Deploy'
 
-# !! IMPORTANT !!
-# Create secret it GitHub called: AZURE_WEBAPP_PUBLISH_PROFILE
-# Get the value for this, from your Azure Function app via the portal 
-
 env:
-  AZURE_WEBAPP_NAME:         '{CHANGE_ME}'   
-  AZURE_WEBAPP_PACKAGE_PATH: './functions'
-  NODE_VERSION:              '12.x'
+  AZURE_FUNCTIONAPP_NAME: 'fractals'   
+  PACKAGE_PATH:          './functions'
+  NODE_VERSION:          '10.x'
 
 jobs:
   buildDeployJob:
@@ -29,11 +29,11 @@ jobs:
     
     - name: 'Run npm install'
       run: npm install
-      working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      working-directory: ${{ env.PACKAGE_PATH }}
     
     - name: 'Deploy to Azure Function App'
-      uses: azure/webapps-deploy@v1
+      uses: Azure/functions-action@v1
       with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBPROFILE }}
+        package: ${{ env.PACKAGE_PATH }}

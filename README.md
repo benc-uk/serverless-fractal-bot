@@ -16,9 +16,10 @@ Showcases:
 
 ![](https://user-images.githubusercontent.com/14982936/74386198-4a752300-4ded-11ea-8341-fa894d3cb163.png)
 
+
 # Running Locally
-- Have Node.js installed
-- Clone the repo
+- Have Node.js 10+ installed
+- Git clone the repo
 - Install [Function Core Tools](https://github.com/Azure/azure-functions-core-tools) v2 or v3
 - cd `functions`
 - `npm install`
@@ -28,19 +29,61 @@ Showcases:
 
 > Note. The function `tweetRandomFractal` will try to run every 2 hours (as defined in function.json), this will not work until some Twitter API credentials are provided, see below
 
-# Repo Structure
-- `/functions/` Functions App project folder with all functions code
-- `/.github`
+> Note. When running locally there is no dependency on Windows, everything will work on Linux/MacOS
+
+# Deployment
+The app consists of just a single [Function App in Azure](https://docs.microsoft.com/en-us/azure/azure-functions/functions-overview). Note. Windows version of Functions must be used, this is due to the NPM canvas module used. The Linux version refuses to install or run inside  App Service (trust me on this one, I tried *everything*)
+
+### Azure resources
+
+```bash
+region=northeurope
+resgrp=demo.serverless
+appname=fractals
+storage=func2019
+
+az group create --name $resgrp --location $region
+
+az storage account create --name $storage --resource-group $resgrp \
+--sku Standard_LRS --kind StorageV2
+
+az functionapp create --resource-group $resgrp --name $appname \
+--os-type Windows --runtime node --runtime-version 10 \
+--consumption-plan-location $region \
+--storage-account $storage
+```
+
+### Deploy the functions code 
+On Windows run `npm install` and zip the functions folder, then use zip-deploy
+```
+az functionapp deployment source config-zip --src ./functions.zip --name $appname -g $resgrp
+```
+
+If running on Linux/Mac use the GitHub Action to deploy the functions code
+
  
 # Functions
-- `createFractal` - Main fractal 
-- `createPoints`
-- `randomFractal`
-- `tweetRandomFractal`
+This project consists of four functions. There is a `lib/fractals.js` which contains shared code
 
+## createFractal
+**Trigger**: HTTP  
+Main fractal generation function will create a fractal based on the input URL query parameters.  
+**Output**: HTTP response with PNG body
 
-# Deploying To Azure
-Blah
+## createPoints
+**Trigger**: HTTP  
+Utility function which generates a static `points.json` file, which is used by the random fractal functions in order to find visually interesting points in the Mandlebrot set to use.  
+**Output**: HTTP response with JSON body
+
+## randomFractal
+**Trigger**: HTTP  
+Render a random fractal and return it in the browser.  
+**Output**: HTTP response with PNG body
+
+## tweetRandomFractal
+**Trigger**: Timer  
+Generates a random fractal and sends it to twitter as a tweet with the image embedded as media.  
+**Output**: None
 
 # CI & GitHub Actions
 Also blah
