@@ -90,3 +90,11 @@ Also blah
 
 # Twitter API & Auth Credentials
 Blah words go here
+
+Set these either in `local.settings.json` or as app settings on the Function App
+```
+TWITTER_ACCESS_TOKEN
+TWITTER_API_KEY
+TWITTER_API_SECRET
+TWITTER_TOKEN_SECRET
+```
