@@ -51,7 +51,10 @@ az functionapp create --resource-group $resgrp --name $appname \
 --os-type Windows --runtime node --runtime-version 10 \
 --consumption-plan-location $region \
 --storage-account $storage
+
+az functionapp config set --use-32bit-worker-process false -n $appname -g $resgrp
 ```
+
 
 ### Deploy the functions code 
 On Windows run `npm install` and zip the functions folder, then use zip-deploy
