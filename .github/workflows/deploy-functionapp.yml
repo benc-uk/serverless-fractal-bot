@@ -8,7 +8,7 @@ name: 'Build & Deploy'
 env:
   AZURE_FUNCTIONAPP_NAME: 'fractals'   
   PACKAGE_PATH:          './functions'
-  NODE_VERSION:          '10.x'
+  NODE_VERSION:          '12.x'
 
 jobs:
   buildDeployJob:
