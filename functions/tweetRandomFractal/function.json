@@ -6,7 +6,7 @@
       "type": "timerTrigger",
       "direction": "in",
       "schedule": "0 39 */2 * * *",
-      "runOnStartup": true
+      "runOnStartup": false
     },
     {
       "type": "http",
