@@ -80,12 +80,12 @@ Utility function which generates a static `points.json` file, which is used by t
 
 ## randomFractal
 **Trigger**: HTTP  
-Render a random fractal and return it in the browser.  
+Render a random fractal and return it in the browser. Fractals below a certain threshold are rejected and makes five attempts to render a "good" fractal 
 **Output**: HTTP response with PNG body
 
 ## tweetRandomFractal
 **Trigger**: Timer  
-Generates a random fractal and sends it to twitter as a tweet with the image embedded as media.  
+Generates a random fractal and sends it to twitter as a tweet with the image embedded as media. Fractals below a certain threshold are rejected and function makes five attempts to render a "good" fractal
 **Output**: None
 
 # CI & GitHub Actions

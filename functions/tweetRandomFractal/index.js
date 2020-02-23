@@ -13,6 +13,7 @@ const FUNCTION_APP_NAME = process.env.APPSETTING_WEBSITE_SITE_NAME || "fractals"
 // Default fractal size, seems ok
 const FRACTAL_WIDTH = 1280
 const FRACTAL_HEIGHT = 768
+const QUALITY_THRESHOLD = 10
 
 //
 // Generate a random fractal, then send it to Twitter as a tweet
@@ -26,14 +27,29 @@ module.exports = async function (context, fractalTimer) {
       return
     }
 
-    // Get randomized fractal parameters
-    let fractalRequest = await randomFractalRequest(FRACTAL_WIDTH, FRACTAL_HEIGHT)
+    let fractalCtx
+    let fractalRequest
+    for(let c = 1; c <= 5; c++) {
+      fractalCtx = {}  
+      // Get randomized fractal parameters
+      fractalRequest = randomFractalRequest(FRACTAL_WIDTH, FRACTAL_HEIGHT)
+  
+      // Call createFractal with our request & empty context
+      // Note. This is calling another top level Function, we pretend it's the HTTP trigger request
+      await createFractal(fractalCtx, fractalRequest)
+  
+      // Rough measure of "quality" of fractal is based on number of iterations
+      let totalIter = fractalCtx.res.headers['Fractal-Iters']
+      let quality = totalIter / (fractalRequest.query.w * fractalRequest.query.h)
+   
+      if(quality > QUALITY_THRESHOLD) {
+        context.log(`### ACCEPTING FRACTAL: ${quality}`)
+        break
+      } else {
+        context.log(`### REJECTING FRACTAL: ${quality} RETRYING...`)
+      }
+    }
 
-    // Call createFractal with our request & empty context
-    // !Note! This is calling another top level Function, we cheat and pretend we're a HTTP trigger request
-    let fractalCtx = {}
-    await createFractal(fractalCtx, fractalRequest)
-    
     // Form fractal URL, just for putting into the tweet text
     var queryString = Object.keys(fractalRequest.query).map(key => key + '=' + fractalRequest.query[key]).join('&')
     var fractalUrl = `https://${FUNCTION_APP_NAME}.azurewebsites.net/api/createFractal?${queryString}`
