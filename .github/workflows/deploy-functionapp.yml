@@ -6,9 +6,9 @@ on:
 name: 'Build & Deploy'
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'fractals'   
+  AZURE_FUNCTIONAPP_NAME: 'fractal-bot'   
   PACKAGE_PATH:          './functions'
-  NODE_VERSION:          '10.x'
+  NODE_VERSION:          '12.x'
 
 jobs:
   buildDeployJob:
