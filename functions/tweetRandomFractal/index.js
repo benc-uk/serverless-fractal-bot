@@ -8,7 +8,7 @@ const TWITTER_API_SECRET = process.env.TWITTER_API_SECRET || null
 const TWITTER_ACCESS_TOKEN = process.env.TWITTER_ACCESS_TOKEN || null
 const TWITTER_TOKEN_SECRET = process.env.TWITTER_TOKEN_SECRET || null
 
-const FUNCTION_APP_NAME = process.env.APPSETTING_WEBSITE_SITE_NAME || "fractals"
+const FUNCTION_APP_NAME = process.env.APPSETTING_WEBSITE_SITE_NAME || "fractal-bot"
 
 // Default fractal size, seems ok
 const FRACTAL_WIDTH = 1280
