@@ -14,7 +14,8 @@
     "start": "func start"
   },
   "dependencies": {
-    "canvas": "^2.6.1",
+    "color-convert": "^2.0.1",
+    "pureimage": "^0.2.4",
     "twitter": "^1.7.1"
   },
   "devDependencies": {}

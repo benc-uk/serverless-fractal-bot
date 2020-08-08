@@ -1,19 +1,14 @@
-const iterateJulia = require('../lib/fractals').iterateJulia
-const iterateMandlebrot = require('../lib/fractals').iterateMandlebrot
+const ColorConvert = require('color-convert');
+const PassThroughStream = require('stream').PassThrough;
+const PureImage = require('pureimage');
+
+const iterateJulia = require('../lib/fractals').iterateJulia;
+const iterateMandlebrot = require('../lib/fractals').iterateMandlebrot;
 
 //
 // Render a fractal and return it as a PNG
 //
 module.exports = async function (context, req) {
-  // Without canvas we can't proceed, it's really fussy, so we trap any problems
-  var createCanvas
-  try {
-    createCanvas = require('canvas').createCanvas
-  } catch(err) {
-    context.res = { status: 500, body: err.toString() }       
-    return
-  }
-
   // Parse query parameters, there's a LOT
   let type =        req.query.type || "mandelbrot"
   let maxiters =    parseInt(req.query.iters || 100.0)
@@ -31,15 +26,14 @@ module.exports = async function (context, req) {
   let innerBright = parseFloat(req.query.innerBright || 0)
   
   const ratio = width / height
-  
-  const canvas = createCanvas(width, height)
-  const ctx = canvas.getContext('2d')
+  const bitmap = PureImage.make(width, height);
   let r, i
   let totalIter = 0
-  
+  let rgb = [0, 0, 0]
+
   // Generate fractal image, looping x, y over canvas size
-  for (var x = 0; x < canvas.width; x++) {
-    for (var y = 0; y < canvas.height; y++) {
+  for (var x = 0; x < bitmap.width; x++) {
+    for (var y = 0; y < bitmap.height; y++) {
 
       // Convert x,y pixel space to r,i complex plane
       // Don't ask me to explain this
@@ -61,7 +55,8 @@ module.exports = async function (context, req) {
       // Choose colour of pixel
       if (iterations == maxiters) {
         // Inside the set - colour based on inner colour
-        ctx.fillStyle = `hsl(${hue}, ${sat}%, ${innerBright}%)`
+        // ColorConvert is used as PureImage doesn't support HSL yet
+        rgb = ColorConvert.hsl.rgb(hue, sat, innerBright)
       } else {
         // Outside the set, colour based on number of iterations
         totalIter += iterations
@@ -73,22 +68,31 @@ module.exports = async function (context, req) {
         // Hue is calculated with a cosine to create repeating colour loops
         let hueVal = Math.cos(nIter * hueLoops) * hue
 
-        ctx.fillStyle = `hsl(${hueVal}, ${sat}%, ${lumVal}%)`
+        rgb = ColorConvert.hsl.rgb(hueVal,sat,lumVal)
       }  
 
-      // Draw the pixel!
-      ctx.fillRect(x, y, 1, 1)    
+      // Draw the pixel direct to bitmap, no need for a context
+      bitmap.setPixelRGBA_i(x, y, rgb[0], rgb[1], rgb[2], 255)
     }
   }
-  
+
+  // Use a PassThrough stream to copy PNG data into an array
+  const stream = new PassThroughStream();
+  const pngData = [];
+  stream.on('data', chunk => pngData.push(chunk));
+  stream.on('end', () => {});
+  await PureImage.encodePNGToStream(bitmap, stream);
+  // Convert the array into a Buffer for sending in HTTP res
+  const bufferImage = Buffer.concat(pngData);
+
   // Return canvas as a buffer with PNG context type
-  // isRaw required to stop runtime interpreting payload
-  context.res = {
+  // isRaw required to stop Functions runtime interpreting payload
+  context.res = { 
     isRaw: true,
     headers: { 
       "Content-Type": "image/png",
       "Fractal-Iters": Math.floor(totalIter)
     },
-    body: canvas.toBuffer()
+    body: bufferImage
   }
 }
