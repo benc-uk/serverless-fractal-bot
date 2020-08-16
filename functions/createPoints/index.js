@@ -3,18 +3,18 @@ const iterateMandlebrot = require('../lib/fractals').iterateMandlebrot
 
 module.exports = async function (context, req) {
   // Parse parameters
-  let maxiters =   parseInt(req.query.iters || 100.0)
-  let zoom =       parseFloat(req.query.zoom || 0.45)
-  let centerI =    parseFloat(req.query.i || 0)
-  let centerR =    parseFloat(req.query.r || -0.6) 
-  let width =      parseInt(req.query.w || 600)
-  let height =     parseInt(req.query.h || 400)
-  let threshold =  parseInt(req.query.threshold || 80)
+  const maxiters =   parseInt(req.query.iters || 100.0)
+  const zoom =       parseFloat(req.query.zoom || 0.45)
+  const centerI =    parseFloat(req.query.i || 0)
+  const centerR =    parseFloat(req.query.r || -0.6)
+  const width =      parseInt(req.query.w || 600)
+  const height =     parseInt(req.query.h || 400)
+  const threshold =  parseInt(req.query.threshold || 80)
   const ratio = width / height
 
   let r, i
-  let points = []
-  
+  const points = []
+
   // Generate points
   for (var x = 0; x < width; x++) {
     for (var y = 0; y < height; y++) {
@@ -31,8 +31,8 @@ module.exports = async function (context, req) {
       // Interesting points
       if (iterations != maxiters) {
         // Outside the set
-        let l = (iterations / (maxiters-1)) * 100
-        if(l > threshold) points.push({r, i})  
+        const l = (iterations / (maxiters-1)) * 100
+        if(l > threshold) points.push({r, i})
       }
     }
   }

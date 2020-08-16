@@ -9,20 +9,21 @@ const QUALITY_THRESHOLD = 10
 module.exports = async function (context, req) {
 
   let fractalCtx
-  for(let c = 1; c <= 5; c++) {
-    fractalCtx = {}  
+  for (let c = 1; c <= 5; c++) {
+    fractalCtx = {}
     // Get randomized fractal parameters
-    let fractalRequest = randomFractalRequest(req.query.w || 500, req.query.w || 500)
+    const fractalRequest = randomFractalRequest(req.query.w || 500, req.query.w || 500)
 
+    context.log(fractalRequest)
     // Call createFractal with our request & empty context
     // Note. This is calling another top level Function, we pretend it's the HTTP trigger request
     await createFractal(fractalCtx, fractalRequest)
 
     // Rough measure of "quality" of fractal is based on number of iterations
-    let totalIter = fractalCtx.res.headers['Fractal-Iters']
-    let quality = totalIter / (fractalRequest.query.w * fractalRequest.query.h)
- 
-    if(quality > QUALITY_THRESHOLD) {
+    const totalIter = fractalCtx.res.headers['Fractal-Iters']
+    const quality = totalIter / (fractalRequest.query.w * fractalRequest.query.h)
+
+    if (quality > QUALITY_THRESHOLD) {
       context.log(`### ACCEPTING FRACTAL: ${quality}`)
       break
     } else {
@@ -33,4 +34,4 @@ module.exports = async function (context, req) {
   // This is a pass-through function, and returns the context which has the PNG body etc
   // see createFractal for details :)
   context.res = fractalCtx.res
-};
+}

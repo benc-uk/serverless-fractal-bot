@@ -11,12 +11,15 @@
   },
   "license": "MIT",
   "scripts": {
-    "start": "func start"
+    "start": "func start",
+    "lint": "eslint \"**/*.js\""
   },
   "dependencies": {
     "color-convert": "^2.0.1",
     "pureimage": "^0.2.4",
     "twitter": "^1.7.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint": "^7.7.0"
+  }
 }
