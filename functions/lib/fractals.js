@@ -74,7 +74,7 @@ module.exports.randomFractalRequest = function (width, height) {
         iter: Math.round(50 + Math.random() * 100),
         r: Number(point.r.toFixed(6)),
         i: Number(point.i.toFixed(6)),
-        hueLoops: roundTo(Math.random() * 4),
+        hueLoops: roundTo(Math.random() * 4, 2),
         innerBright: Math.round(Math.random() * 50)
       }
     }
