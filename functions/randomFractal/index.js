@@ -14,7 +14,6 @@ module.exports = async function (context, req) {
     // Get randomized fractal parameters
     const fractalRequest = randomFractalRequest(req.query.w || 500, req.query.w || 500)
 
-    context.log(fractalRequest)
     // Call createFractal with our request & empty context
     // Note. This is calling another top level Function, we pretend it's the HTTP trigger request
     await createFractal(fractalCtx, fractalRequest)

@@ -72,7 +72,7 @@ module.exports = async function (context, fractalTimer) {
     if (fractalRequest.query.type === 'mandelbrot') {
       statusMsg = `mandelbrot(r=${fractalRequest.query.r.toFixed(4)}, i=${fractalRequest.query.i.toFixed(4)}, zoom=${fractalRequest.query.zoom.toFixed(4)})`
     } else {
-      statusMsg = `julia(seedR=${fractalRequest.query.r.toFixed(4)}, seedR=${fractalRequest.query.i.toFixed(4)}, zoom=${fractalRequest.query.zoom.toFixed(4)})`
+      statusMsg = `julia(seedR=${fractalRequest.query.r.toFixed(4)}, seedI=${fractalRequest.query.i.toFixed(4)}, zoom=${fractalRequest.query.zoom.toFixed(4)})`
     }
     statusMsg += `\n${fractalUrl}`
 

@@ -84,10 +84,10 @@ module.exports.randomFractalRequest = function (width, height) {
 }
 
 //
-// Get number of interations for a point in the fractal
+// Get number of iterations for a point in the fractal
 //
 module.exports.iterateMandlebrot = function (r, i, maxiters) {
-  // Pre-calc some values for optimisation
+  // Pre-calc some values for optimization
   const escape = 256.0
   const escape2 = escape * escape
   const log2 = Math.log(2.0)
@@ -124,10 +124,10 @@ module.exports.iterateMandlebrot = function (r, i, maxiters) {
 
 
 //
-// Get number of interations for a point in the fractal
+// Get number of iterations for a point in the fractal
 //
 module.exports.iterateJulia = function (r, i, seedR, seedI, maxiters) {
-  // Pre-calc some values for optimisation
+  // Pre-calc some values for optimization
   const escape = 256.0
   const escape2 = escape * escape
   const log2 = Math.log(2.0)
