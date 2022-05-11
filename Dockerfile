@@ -1,4 +1,6 @@
-FROM mcr.microsoft.com/azure-functions/node:3.0-node12
+# This is not used!
+
+FROM mcr.microsoft.com/azure-functions/node:4-node16
 
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot 
 ENV AzureFunctionsJobHost__Logging__Console__IsEnabled=true

@@ -20,7 +20,7 @@ Showcases:
 # Running Locally
 - Have Node.js 10+ installed
 - Git clone the repo
-- Install [Function Core Tools](https://github.com/Azure/azure-functions-core-tools) v2 or v3
+- Install [Function Core Tools](https://github.com/Azure/azure-functions-core-tools) 
 - cd `functions`
 - `npm install`
 - Place Azure storage account connection string in `AzureWebJobsStorage` key in `local.settings.json`
@@ -29,42 +29,40 @@ Showcases:
 
 > Note. The function `tweetRandomFractal` will try to run every 2 hours (as defined in function.json), this will not work until some Twitter API credentials are provided, see below
 
-> Note. When running locally there is no dependency on Windows, everything will work on Linux/MacOS
-
 # Deployment
-The app consists of just a single [Function App in Azure](https://docs.microsoft.com/en-us/azure/azure-functions/functions-overview). Note. Windows version of Functions must be used, this is due to the NPM canvas module used. The Linux version refuses to install or run inside  App Service (trust me on this one, I tried *everything*)
+The app consists of just a single [Function App in Azure](https://docs.microsoft.com/en-us/azure/azure-functions/functions-overview). It is deployed as "code" rather than a container, this way it can run in a free Linux App Service plan
 
 ### Azure resources
 
-```bash
-region=northeurope
-resgrp=demo.serverless
-appname=fractals
-storage=func2019
+Deploy Azure resources using the following bash
 
+```bash
+# Change these!
+region=northeurope
+resgrp=temp-serverless
+appname=myfractbot
+storage=myfuncstor
+
+# Deploy resource group, storage and app
 az group create --name $resgrp --location $region
 
 az storage account create --name $storage --resource-group $resgrp \
 --sku Standard_LRS --kind StorageV2
 
 az functionapp create --resource-group $resgrp --name $appname \
---os-type Windows --runtime node --runtime-version 10 \
+--runtime node --runtime-version 14 \
+--functions-version 4 --os-type linux \
 --consumption-plan-location $region \
 --storage-account $storage
 
-az functionapp config set --use-32bit-worker-process false -n $appname -g $resgrp
+# Zip the source code, along with node_modules
+cd functions; npm install; zip -r /tmp/func-deploy.zip *; cd ..
+# Deploy to the function app
+az functionapp deployment source config-zip -g $resgrp -n $appname --src /tmp/func-deploy.zip
 ```
-
 
 ### Deploy the functions code 
-On Windows run `npm install` and zip the functions folder, then use zip-deploy
-```
-az functionapp deployment source config-zip --src ./functions.zip --name $appname -g $resgrp
-```
 
-If running on Linux/Mac use the GitHub Action to deploy the functions code
-
- 
 # Functions
 This project consists of four functions. There is a `lib/fractals.js` which contains shared code
 
@@ -89,13 +87,15 @@ Generates a random fractal and sends it to twitter as a tweet with the image emb
 **Output**: None
 
 # CI & GitHub Actions
-Also blah
+
+Deployment is done by the `deploy-functionapp.yml` workflow, using the secret `AZURE_FUNCTIONAPP_PUBPROFILE`
+
 
 # Twitter API & Auth Credentials
-Blah words go here
 
 Set these either in `local.settings.json` or as app settings on the Function App
-```
+
+```text
 TWITTER_ACCESS_TOKEN
 TWITTER_API_KEY
 TWITTER_API_SECRET

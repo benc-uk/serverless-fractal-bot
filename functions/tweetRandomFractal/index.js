@@ -52,7 +52,9 @@ module.exports = async function (context, fractalTimer) {
     }
 
     // Form fractal URL, just for putting into the tweet text
-    var queryString = Object.keys(fractalRequest.query).map(key => key + '=' + fractalRequest.query[key]).join('&')
+    var queryString = Object.keys(fractalRequest.query)
+      .map((key) => key + '=' + fractalRequest.query[key])
+      .join('&')
     var fractalUrl = `https://${FUNCTION_APP_NAME}.azurewebsites.net/api/createFractal?${queryString}`
     context.log(`### fractalUrl: ${fractalUrl}`)
 
@@ -61,11 +63,13 @@ module.exports = async function (context, fractalTimer) {
       consumer_key: TWITTER_API_KEY,
       consumer_secret: TWITTER_API_SECRET,
       access_token_key: TWITTER_ACCESS_TOKEN,
-      access_token_secret: TWITTER_TOKEN_SECRET
+      access_token_secret: TWITTER_TOKEN_SECRET,
     })
 
     // Upload the image using the body of the context from createFractal, note this is a binary Buffer
-    const mediaResp = await client.post('media/upload', { media: fractalCtx.res.body })
+    const mediaResp = await client.post('media/upload', {
+      media: fractalCtx.res.body,
+    })
 
     // Format the tweet message text
     let statusMsg
@@ -79,7 +83,7 @@ module.exports = async function (context, fractalTimer) {
     // Now send the tweet, attaching the media_id from the image upload
     const twitterResp = await client.post('statuses/update', {
       status: statusMsg,
-      media_ids: mediaResp.media_id_string
+      media_ids: mediaResp.media_id_string,
     })
 
     context.log(`### Tweet sent: ${twitterResp.id}\n${twitterResp.text}`)
