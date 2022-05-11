@@ -18,13 +18,16 @@ Showcases:
 
 
 # Running Locally
-- Have Node.js 10+ installed
-- Git clone the repo
+- Have Node.js 14+ installed
 - Install [Function Core Tools](https://github.com/Azure/azure-functions-core-tools) 
-- cd `functions`
-- `npm install`
+- Git clone the repo
 - Place Azure storage account connection string in `AzureWebJobsStorage` key in `local.settings.json`
-- `func start`
+- Run commands:
+  ```bash
+  cd functions
+  npm install
+  func start
+  ```
 - Test by hitting http://localhost:7071/api/createFractal or http://localhost:7071/api/randomFractal endpoints with browser
 
 > Note. The function `tweetRandomFractal` will try to run every 2 hours (as defined in function.json), this will not work until some Twitter API credentials are provided, see below
@@ -73,7 +76,7 @@ Main fractal generation function will create a fractal based on the input URL qu
 
 ## createPoints
 **Trigger**: HTTP  
-Utility function which generates a static `points.json` file, which is used by the random fractal functions in order to find visually interesting points in the Mandlebrot set to use.  
+Utility function which generates a static `points.json` file, which is used by the random fractal functions in order to find visually interesting points in the Mandlebrot set to use. 
 **Output**: HTTP response with JSON body
 
 ## randomFractal
